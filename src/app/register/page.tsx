@@ -7,11 +7,11 @@ import { createClient } from '@/lib/supabase/client'
 export default function RegisterPage() {
   const [fullName, setFullName] = useState('')
   const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
+  const [success, setSuccess]   = useState(false)
 
   const supabase = createClient()
 
@@ -19,22 +19,19 @@ export default function RegisterPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     if (password.length < 6) {
       setError('Şifre en az 6 karakter olmalı')
       setLoading(false)
       return
     }
-
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName, username },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: 'https://supsuu.vercel.app/auth/callback',
       },
     })
-
     if (error) setError(error.message)
     else setSuccess(true)
     setLoading(false)
@@ -42,31 +39,34 @@ export default function RegisterPage() {
 
   async function handleGoogleLogin() {
     setLoading(true)
+    setError('')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: {
+        redirectTo: 'https://supsuu.vercel.app/auth/callback',
+      },
     })
-    if (error) { setError(error.message); setLoading(false) }
+    if (error) {
+      setError(error.message)
+      setLoading(false)
+    }
   }
 
   if (success) {
     return (
       <div className="auth-page">
-        <div className="auth-bg">
-          <div className="orb orb-1" /><div className="orb orb-2" />
-        </div>
-        <div className="auth-box" style={{textAlign:'center'}}>
-          <div className="success-icon">📬</div>
+        <div className="auth-bg"><div className="orb orb-1" /><div className="orb orb-2" /></div>
+        <div className="auth-box" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📬</div>
           <h2 className="auth-title">E-postanı kontrol et!</h2>
-          <p className="auth-sub" style={{marginBottom:'1.5rem'}}>
-            <strong style={{color:'#7dd87d'}}>{email}</strong> adresine doğrulama linki gönderdik.
-            Linke tıklayarak hesabını aktifleştir.
+          <p className="auth-sub" style={{ marginBottom: '1.5rem' }}>
+            <strong style={{ color: '#7dd87d' }}>{email}</strong> adresine doğrulama linki gönderdik.
           </p>
-          <Link href="/login" className="btn-primary" style={{display:'block',textAlign:'center',textDecoration:'none',padding:'0.9rem',borderRadius:'12px'}}>
+          <Link href="/login" className="btn-primary" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.9rem', borderRadius: '12px' }}>
             Giriş sayfasına dön
           </Link>
         </div>
-        <style>{baseStyles}</style>
+        <style>{styles}</style>
       </div>
     )
   }
@@ -102,29 +102,25 @@ export default function RegisterPage() {
           <div className="field-row">
             <div className="field">
               <label>Ad Soyad</label>
-              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
-                placeholder="Ahmet Yılmaz" required />
+              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Ahmet Yılmaz" required />
             </div>
             <div className="field">
               <label>Kullanıcı Adı</label>
-              <input type="text" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g,''))}
-                placeholder="ahmetyilmaz" required />
+              <input type="text" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} placeholder="ahmetyilmaz" required />
             </div>
           </div>
 
           <div className="field">
             <label>E-posta</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="ornek@email.com" required />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="ornek@email.com" required />
           </div>
 
           <div className="field">
             <label>Şifre</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-              placeholder="En az 6 karakter" required />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="En az 6 karakter" required />
             {password.length > 0 && (
-              <div className="password-strength">
-                <div className={`strength-bar ${password.length >= 6 ? password.length >= 10 ? 'strong' : 'medium' : 'weak'}`} />
+              <div className="pw-strength">
+                <div className={`pw-bar ${password.length >= 10 ? 'strong' : password.length >= 6 ? 'medium' : 'weak'}`} />
                 <span>{password.length >= 10 ? 'Güçlü' : password.length >= 6 ? 'Orta' : 'Zayıf'}</span>
               </div>
             )}
@@ -134,54 +130,31 @@ export default function RegisterPage() {
             {loading ? 'Hesap oluşturuluyor...' : 'Hesap Oluştur'}
           </button>
 
-          <p className="terms">
-            Kayıt olarak <a href="#">Kullanım Şartları</a>nı kabul etmiş olursun.
-          </p>
+          <p className="terms">Kayıt olarak <a href="#">Kullanım Şartları</a>nı kabul etmiş olursun.</p>
         </form>
 
-        <p className="auth-footer">
-          Zaten hesabın var mı? <Link href="/login">Giriş yap</Link>
-        </p>
+        <p className="auth-footer">Zaten hesabın var mı? <Link href="/login">Giriş yap</Link></p>
       </div>
 
-      <style>{baseStyles}</style>
+      <style>{styles}</style>
     </div>
   )
 }
 
-const baseStyles = `
+const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .auth-page {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Sans', sans-serif; background: #0a0f0a; padding: 2rem;
-    position: relative; overflow: hidden;
-  }
+  .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; background: #0a0f0a; padding: 2rem; position: relative; overflow: hidden; }
   .auth-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
   .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.2; }
   .orb-1 { width: 500px; height: 500px; background: #1a4d1a; top: -150px; left: -150px; }
   .orb-2 { width: 400px; height: 400px; background: #0d3d2d; bottom: -100px; right: -100px; }
-  .grid-overlay {
-    position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(125,216,125,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(125,216,125,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  .auth-box {
-    position: relative; z-index: 1;
-    background: rgba(15,22,15,0.85); border: 1px solid rgba(125,216,125,0.12);
-    backdrop-filter: blur(20px); border-radius: 24px; padding: 2.5rem;
-    width: 100%; max-width: 460px; animation: fadeUp 0.5s ease both;
-  }
+  .grid-overlay { position: absolute; inset: 0; background-image: linear-gradient(rgba(125,216,125,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(125,216,125,0.03) 1px, transparent 1px); background-size: 60px 60px; }
+  .auth-box { position: relative; z-index: 1; background: rgba(15,22,15,0.85); border: 1px solid rgba(125,216,125,0.12); backdrop-filter: blur(20px); border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 460px; animation: fadeUp 0.5s ease both; }
   .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 600; color: #7dd87d; text-decoration: none; display: block; margin-bottom: 1.75rem; }
   .auth-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 300; color: #e8f5e8; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
   .auth-sub { color: #5a7a5a; font-size: 0.9rem; margin-bottom: 2rem; }
-  .success-icon { font-size: 3rem; margin-bottom: 1rem; }
-  .btn-google {
-    width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-    color: #d0e8d0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
-    padding: 0.85rem; border-radius: 12px; cursor: pointer; transition: all 0.2s;
-  }
+  .btn-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #d0e8d0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; padding: 0.85rem; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
   .btn-google:hover { background: rgba(255,255,255,0.1); }
   .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
   .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: #2a4a2a; font-size: 0.8rem; }
@@ -191,24 +164,16 @@ const baseStyles = `
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
   .field { display: flex; flex-direction: column; gap: 0.4rem; }
   .field label { font-size: 0.82rem; font-weight: 500; color: #7a9a7a; }
-  .field input {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-    color: #e8f5e8; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-    padding: 0.8rem 1rem; border-radius: 10px; outline: none; transition: all 0.2s;
-  }
+  .field input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #e8f5e8; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; padding: 0.8rem 1rem; border-radius: 10px; outline: none; transition: all 0.2s; }
   .field input::placeholder { color: #2a4a2a; }
   .field input:focus { border-color: rgba(125,216,125,0.4); background: rgba(125,216,125,0.04); }
-  .password-strength { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
-  .strength-bar { height: 3px; border-radius: 2px; flex: 1; transition: all 0.3s; }
-  .strength-bar.weak { background: #ef4444; width: 33%; }
-  .strength-bar.medium { background: #f59e0b; width: 66%; }
-  .strength-bar.strong { background: #22c55e; width: 100%; }
-  .password-strength span { font-size: 0.75rem; color: #5a7a5a; }
-  .btn-primary {
-    width: 100%; background: #27a05b; color: #fff;
-    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500;
-    padding: 0.9rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
-  }
+  .pw-strength { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
+  .pw-bar { height: 3px; border-radius: 2px; flex: 1; transition: all 0.3s; }
+  .pw-bar.weak { background: #ef4444; width: 33%; }
+  .pw-bar.medium { background: #f59e0b; width: 66%; }
+  .pw-bar.strong { background: #22c55e; width: 100%; }
+  .pw-strength span { font-size: 0.75rem; color: #5a7a5a; }
+  .btn-primary { width: 100%; background: #27a05b; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; padding: 0.9rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
   .btn-primary:hover { background: #1e8049; }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
   .terms { font-size: 0.78rem; color: #2a4a2a; text-align: center; }

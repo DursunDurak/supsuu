@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
 
   const supabase = createClient()
 
@@ -24,11 +24,17 @@ export default function LoginPage() {
 
   async function handleGoogleLogin() {
     setLoading(true)
+    setError('')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: {
+        redirectTo: 'https://supsuu.vercel.app/auth/callback',
+      },
     })
-    if (error) { setError(error.message); setLoading(false) }
+    if (error) {
+      setError(error.message)
+      setLoading(false)
+    }
   }
 
   return (
@@ -44,7 +50,6 @@ export default function LoginPage() {
         <h1 className="auth-title">Tekrar hoş geldin</h1>
         <p className="auth-sub">Doğa topluluğuna devam et</p>
 
-        {/* Google */}
         <button className="btn-google" onClick={handleGoogleLogin} disabled={loading}>
           <svg width="18" height="18" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -58,7 +63,6 @@ export default function LoginPage() {
 
         <div className="divider"><span>veya</span></div>
 
-        {/* Email form */}
         <form onSubmit={handleEmailLogin} className="auth-form">
           {error && <div className="auth-error">⚠️ {error}</div>}
 
@@ -91,11 +95,10 @@ export default function LoginPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         .auth-page {
           min-height: 100vh; display: flex; align-items: center; justify-content: center;
-          font-family: 'DM Sans', sans-serif;
-          background: #0a0f0a; padding: 2rem; position: relative; overflow: hidden;
+          font-family: 'DM Sans', sans-serif; background: #0a0f0a; padding: 2rem;
+          position: relative; overflow: hidden;
         }
         .auth-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
         .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.2; }
@@ -103,29 +106,19 @@ export default function LoginPage() {
         .orb-2 { width: 400px; height: 400px; background: #0d3d2d; bottom: -100px; right: -100px; }
         .grid-overlay {
           position: absolute; inset: 0;
-          background-image: linear-gradient(rgba(125,216,125,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(125,216,125,0.03) 1px, transparent 1px);
+          background-image: linear-gradient(rgba(125,216,125,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(125,216,125,0.03) 1px, transparent 1px);
           background-size: 60px 60px;
         }
-
         .auth-box {
           position: relative; z-index: 1;
-          background: rgba(15,22,15,0.85);
-          border: 1px solid rgba(125,216,125,0.12);
-          backdrop-filter: blur(20px);
-          border-radius: 24px; padding: 2.5rem;
-          width: 100%; max-width: 420px;
-          animation: fadeUp 0.5s ease both;
+          background: rgba(15,22,15,0.85); border: 1px solid rgba(125,216,125,0.12);
+          backdrop-filter: blur(20px); border-radius: 24px; padding: 2.5rem;
+          width: 100%; max-width: 420px; animation: fadeUp 0.5s ease both;
         }
-        .logo {
-          font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 600;
-          color: #7dd87d; text-decoration: none; display: block; margin-bottom: 1.75rem;
-        }
-        .auth-title {
-          font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 300;
-          color: #e8f5e8; margin-bottom: 0.4rem; letter-spacing: -0.02em;
-        }
+        .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 600; color: #7dd87d; text-decoration: none; display: block; margin-bottom: 1.75rem; }
+        .auth-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 300; color: #e8f5e8; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
         .auth-sub { color: #5a7a5a; font-size: 0.9rem; margin-bottom: 2rem; }
-
         .btn-google {
           width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;
           background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
@@ -134,20 +127,10 @@ export default function LoginPage() {
         }
         .btn-google:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
         .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .divider {
-          display: flex; align-items: center; gap: 1rem;
-          margin: 1.5rem 0; color: #2a4a2a; font-size: 0.8rem;
-        }
-        .divider::before, .divider::after {
-          content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
-        }
-
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: #2a4a2a; font-size: 0.8rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
         .auth-form { display: flex; flex-direction: column; gap: 1rem; }
-        .auth-error {
-          background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
-          color: #fca5a5; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem;
-        }
+        .auth-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem; }
         .field { display: flex; flex-direction: column; gap: 0.4rem; }
         .field label { font-size: 0.82rem; font-weight: 500; color: #7a9a7a; }
         .field input {
@@ -157,7 +140,6 @@ export default function LoginPage() {
         }
         .field input::placeholder { color: #2a4a2a; }
         .field input:focus { border-color: rgba(125,216,125,0.4); background: rgba(125,216,125,0.04); }
-
         .btn-primary {
           width: 100%; background: #27a05b; color: #fff;
           font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500;
@@ -166,15 +148,10 @@ export default function LoginPage() {
         }
         .btn-primary:hover { background: #1e8049; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
         .auth-footer { text-align: center; font-size: 0.85rem; color: #3a5a3a; margin-top: 1.5rem; }
         .auth-footer a { color: #7dd87d; text-decoration: none; font-weight: 500; }
         .auth-footer a:hover { text-decoration: underline; }
-
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
     </div>
   )
